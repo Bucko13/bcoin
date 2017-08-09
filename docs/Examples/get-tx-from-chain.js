@@ -8,7 +8,7 @@ const util = bcoin.util;
 
 const HOME = process.env.HOME;
 
-// Setup logger to see what's Bcoin doing.
+// Setup logger to see what Bcoin is doing.
 const logger = new Logger({
   level: 'debug'
 });
