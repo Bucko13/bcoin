@@ -37,4 +37,7 @@ NOTES:
       to split a UTXO first sending to yourself
 - need to account for who pays the fee
   - maybe the receiver adds one final input that is entirely for fee
-** *****/
+=======
+- need to account for change addresses
+- need to account for who pays the fee (probably should be the receiver)
+***** **/
