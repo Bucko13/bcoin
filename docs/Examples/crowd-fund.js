@@ -81,4 +81,6 @@ NOTES:
 
 Extra Features:
 - funder that does "matching donations"
-** *****/
+- need to account for change addresses
+- need to account for who pays the fee (probably should be the receiver)
+***** **/
