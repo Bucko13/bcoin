@@ -6,28 +6,69 @@ const MTX = bcoin.mtx;
 const fundingTarget = 100000000; // 1 BTC
 
 (async () => {
+const client = await new bcoin.http.Client({ network: 'regtest' });
+
 // Step 1: Create a blank mtx
 const fundMe = new MTX();
 
 // Step 2:
 // Add an output with the target amount
 // you would like to raise and an address you control
+
 const fundeeWallet = await new bcoin.http.Wallet({
-    id: 'foo',
-    network: 'testnet'
+    id: 'primary',
+    network: 'regtest'
   });
 const fundeeAddress = await fundeeWallet.createAddress('default');
-console.log(fundeeWallet);
+
 // need this because can't serialize and output mtx with no input
+
 fundMe.addInput(new bcoin.primitives.Input());
 
 fundMe.addOutput({value: fundingTarget, address: fundeeAddress.address });
 
-// Step 3: Get funder wallet and find coins for amount to fund
+// Step 3: Get funder wallet, find coins to fund with, add input, and sign
 
-// Step X: Fund/sign the mtx with an input
+// check if the wallet exists and if not create it.
+let funderWallet = await client.getWallet('funder-1');
 
-console.log('transaction: ', fundMe);
+if (!funderWallet) {
+  await client.createWallet({id: 'funder-1'});
+}
+
+funderWallet = await new bcoin.http.Wallet({
+  id: 'funder-1',
+  network: 'regtest'
+});
+
+// Note that the following steps assume the funder wallet has balance > 0
+
+// get coins in funder wallet.
+// (Alt: could just add fake coinbase transactions to fund with,
+// probably necessary if including the step to create new wallet)
+
+// Check if coin exists with the exact amount
+// If no exact amount coin-
+  // create and broadcast transaction to self with amount (plus change)
+
+// Get coin that has amount you want to fund for
+
+// Add coin as input to fundMe tx and sign the tx
+
+// Check if tx is fully funded
+
+  // if not fully funded then repeat funding steps (maybe with other wallets)
+
+// Step 4: When fully funded, add input to cover tx fee, sign, and broadcast
+
+// If fully funded
+  // Get size of transaction and calculate satoshis per byte for tx fee
+
+  // add final input to cover tx fee from the fundeeWallet
+
+  // Sign and broadcast tx
+
+// console.log('transaction: ', fundMe);
 })();
 
 /** *****
@@ -37,4 +78,7 @@ NOTES:
       to split a UTXO first sending to yourself
 - need to account for who pays the fee
   - maybe the receiver adds one final input that is entirely for fee
+
+Extra Features:
+- funder that does "matching donations"
 ** *****/
