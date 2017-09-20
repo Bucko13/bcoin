@@ -2,11 +2,13 @@
 
 const bcoin = require('../..');
 const MTX = bcoin.mtx;
+const HashTypes = bcoin.script.hashType;
 
 const fundingTarget = 100000000; // 1 BTC
-
+const network = 'testnet';
+console.log('hashtypes: ', HashTypes)
 (async () => {
-const client = await new bcoin.http.Client({ network: 'regtest' });
+const client = await new bcoin.http.Client({ network });
 
 // Step 1: Create a blank mtx
 const fundMe = new MTX();
@@ -17,12 +19,11 @@ const fundMe = new MTX();
 
 const fundeeWallet = await new bcoin.http.Wallet({
     id: 'primary',
-    network: 'regtest'
+    network
   });
 const fundeeAddress = await fundeeWallet.createAddress('default');
 
 // need this because can't serialize and output mtx with no input
-
 fundMe.addInput(new bcoin.primitives.Input());
 
 fundMe.addOutput({value: fundingTarget, address: fundeeAddress.address });
@@ -38,7 +39,7 @@ if (!funderWallet) {
 
 funderWallet = await new bcoin.http.Wallet({
   id: 'funder-1',
-  network: 'regtest'
+  network
 });
 
 // Note that the following steps assume the funder wallet has balance > 0
@@ -68,7 +69,7 @@ funderWallet = await new bcoin.http.Wallet({
 
   // Sign and broadcast tx
 
-// console.log('transaction: ', fundMe);
+console.log('transaction: ', fundMe);
 })();
 
 /** *****
