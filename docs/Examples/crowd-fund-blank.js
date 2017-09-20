@@ -1,8 +1,11 @@
 'use strict';
 
+const assert = require('assert');
 const bcoin = require('../..');
 const MTX = bcoin.mtx;
 const Keyring = bcoin.keyring;
+const Outpoint = bcoin.outpoint;
+const Script = bcoin.script;
 
 /**
 Part 1
@@ -13,6 +16,7 @@ wallets that have funds already.
 **/
 
 // Let's setup our wallets for a fundee and 2 funders
+// Much of this code is taken from the Working With Transactions guide
 
 // Create an HD master keypair.
 const master = bcoin.hd.generate();
@@ -35,7 +39,35 @@ const funder2Keyring = new Keyring(funder2Key.privateKey);
 const funders = [funder1Keyring, funder2Keyring];
 
 // create some coinbase transactions to fund our wallets
-for(let i=0; i < funders.length; i++) {
+const coins = {};
 
+for(let i=0; i < funders.length; i++) {
+  const cb = new MTX();
+
+  // Add a typical coinbase input
+  cb.addInput({
+    prevout: new Outpoint(),
+    script: new Script()
+  });
+
+  cb.addOutput({
+    address: funders[i].getAddress(),
+    value: 500000 // give the funder 500,000 satoshi
+  });
+
+  assert(cb.inputs[0].isCoinbase());
+
+  // Convert the coinbase output to a Coin
+  // object and add it to our available coins.
+  // In reality you might get these coins from a wallet.
+  coins[i+1] = bcoin.coin.fromTX(cb, 0, -1);
 }
-const cb = new bcoin.mtx();
+
+console.log(coins);
+
+/**
+Part 2
+Now that our funder wallets have funds available
+we can begin to construct the fundee transaction they will donate to
+**/
+
