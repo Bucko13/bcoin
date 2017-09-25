@@ -27,7 +27,7 @@ const KEY2 = 'xprv9s21ZrQH143K3mqiSThzPtWAabQ22Pjp3uSNnZ53A5bQ4udp'
   + 'faKekc2m4AChLYH1XDzANhrSdxHYWUeTWjYJwFwWFyHkTMnMeAcW4JyRCZa';
 
 const workers = new WorkerPool({
-  enabled: false
+  enabled: true
 });
 
 const wdb = new WalletDB({
@@ -293,7 +293,7 @@ describe('Wallet', function() {
     });
 
     const xpriv = HD.PrivateKey.generate();
-    const key = xpriv.deriveBIP44(0).toPublic();
+    const key = xpriv.deriveAccount(44, 0).toPublic();
 
     await wallet.addSharedKey(key);
 
